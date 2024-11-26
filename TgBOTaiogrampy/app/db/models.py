@@ -10,20 +10,44 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Absent(Base):
+    __tablename__ = 'absents'
     id: Mapped[int] = mapped_column(primary_key=True)
-    tg_id = mapped_column(BigInteger)
-    number_gr: Mapped[str]=mapped_column(String(6))
-    status: Mapped[bool]=mapped_column()
+    name_user: Mapped[str] = mapped_column(String(35))
+    number_gr: Mapped[str] = mapped_column(String(6))
+    name_object: Mapped[str] = mapped_column(String(120))
+    cnt_gap: Mapped[int] = mapped_column()
+
+
+class Deadline(Base):
+    __tablename__ = 'deadlines'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name_deadline: Mapped[str] = mapped_column(String(120))
+    number_gr: Mapped[str] = mapped_column(String(6))
+    day_deadline: Mapped[str] = mapped_column(String(10))
+    time_deadline: Mapped[str] = mapped_column(String(5))
+
+
+class Object(Base):
+    __tablename__ = 'objects'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name_object: Mapped[str] = mapped_column(String(120))
 
 
 class Password(Base):
     __tablename__ = 'passwords'
     id: Mapped[int] = mapped_column(primary_key=True)
-    number_gr: Mapped[str]=mapped_column(String(6))
-    password: Mapped[str]=mapped_column(String(50))
+    number_gr: Mapped[str] = mapped_column(String(6))
+    password: Mapped[str] = mapped_column(String(50))
 
+
+class User(Base):
+    __tablename__ = 'users'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(35))
+    tg_id = mapped_column(BigInteger)
+    number_gr: Mapped[str] = mapped_column(String(6))
+    status: Mapped[bool] = mapped_column()
 
 
 async def async_main():
