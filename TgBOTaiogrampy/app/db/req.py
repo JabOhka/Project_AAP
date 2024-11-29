@@ -1,6 +1,7 @@
 from app.db.models import async_session
 from app.db.models import User, Password, Object, Absent, Deadline
 from sqlalchemy import select
+import hashlib
 
 
 async def add_subject(name_subject: str):
@@ -15,8 +16,9 @@ async def add_subject(name_subject: str):
 
 async def check_password(group: str, password: str):
     async with async_session() as session:
+        hash_password = hashlib.md5(password.encode())
         user = await session.scalar(select(Password).where(Password.number_gr == group).
-                                    where(Password.password == password))
+                                    where(Password.password == hash_password.hexdigest()))
         return True if user else False
 
 
@@ -49,6 +51,12 @@ async def get_cnt_gap(name_user: str):
         str_user = await session.scalars(select(Absent).where(Absent.name_user == name_user))
         cnt_gap = [i.cnt_gap for i in str_user]
         return cnt_gap[0]
+
+
+async def get_deadlines(tg_id: int):
+    async with async_session() as session:
+        number_gr = await get_group(tg_id)
+        return await session.scalars(select(Deadline).where(Deadline.number_gr == number_gr))
 
 
 async def get_group(tg_id: int):
@@ -100,4 +108,3 @@ async def set_user_id(tg_id: int):
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         return True if user else False
-

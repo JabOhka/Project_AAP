@@ -18,10 +18,10 @@ async def students(tg_id):
     keyboard = ReplyKeyboardBuilder()
     all_name = await get_users(tg_id)
     keyboard.add(types.KeyboardButton(text='ВСЁ!'))
-    names_list = []
+    sorted_names_list = []
     for name in all_name:
-        names_list.append(name.name)
-    sorted_name_list = sorted(names_list)
+        sorted_names_list.append(name.name)
+    sorted_name_list = sorted(sorted_names_list)
     for name in sorted_name_list:
         keyboard.add(types.KeyboardButton(text=name))
     return keyboard.adjust(3).as_markup()
@@ -30,10 +30,10 @@ async def students(tg_id):
 async def subjects():
     keyboard = ReplyKeyboardBuilder()
     all_subjects = await get_subjects()
-    subjects_list = []
+    sorted_subjects_list = []
     for subject in all_subjects:
-        subjects_list.append(subject.name_object)
-    sorted_subject_list = sorted(subjects_list)
+        sorted_subjects_list.append(subject.name_object)
+    sorted_subject_list = sorted(sorted_subjects_list)
     for subject in sorted_subject_list:
         keyboard.add(types.KeyboardButton(text=subject))
     keyboard.add(types.KeyboardButton(text='Добавить предмет'))

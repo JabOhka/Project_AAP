@@ -12,6 +12,7 @@ import category
 
 router = Router()
 itr_password = 0
+tab = ' '*8
 
 
 class Absent(StatesGroup):
@@ -66,12 +67,14 @@ async def check_password(message: types.Message, state: FSMContext):
     if message.text == 'Пропустить':
         await state.update_data(password=message.text)
         await state.set_state(Reg.status)
+        await message.answer('Продолжим! Введи свое Имя и Фамилию')
     else:
         check = await rq.check_password(intermediate_data['group'], message.text)
         if check:
             await state.update_data(password=message.text)
             await state.set_state(Reg.status)
             await message.answer('Статус подтвержден!')
+            await message.answer('Продолжим! Введи свое Имя и Фамилию')
         elif not check and itr_password < 3:
             itr_password += 1
             await state.update_data(password=message.text)
@@ -80,7 +83,7 @@ async def check_password(message: types.Message, state: FSMContext):
         elif itr_password == 2:
             await state.set_state(Reg.status)
             await message.answer('Статус не подтвержден.')
-    await message.answer('Продолжим! Введи свое Имя и Фамилию')
+            await message.answer('Продолжим! Введи свое Имя и Фамилию')
 
 
 @router.message(Reg.status)
@@ -171,7 +174,18 @@ async def print_table_skips(message: types.Message):
 
 @router.message(F.text == 'Просмотреть дедлайны')
 async def begin_deadlines(message: types.Message):
-    pass
+    global tab
+    deadlines = await rq.get_deadlines(message.from_user.id)
+    sorted_deadlines_list = []
+    b_message = 'Дедлайн:'+tab*2+'Срок:\n'
+    for deadline in deadlines:
+        sorted_deadlines_list.append(deadline)
+    sorted_deadlines_list = sorted(sorted_deadlines_list)
+    for deadline in sorted_deadlines_list:
+        b_message += f'{deadline.name_deadline}'+tab+f'{deadline.day_deadline} {deadline.time_deadline}\n'
+        print(b_message)
+    await message.answer(b_message,
+                         reply_markup=await kb.main(message.from_user.id))
 
 
 @router.message(F.text == 'Добавить дедлайн')
